@@ -1,0 +1,23 @@
+.comment {
+  border-left: 1px dashed #EFEFEF;
+}
+
+.comment-content {
+  border-left: 5px solid #EFEFEF;
+  background-color: rgba(255, 255, 255, 0.2);
+
+  padding: 10px;
+  margin: 10px;
+  margin-left: -1px;
+}
+
+.sub-comments {
+  margin-left: 30px;
+}
+
+.comment-username {
+  padding: 5px;
+  border-radius: 5px;
+  background-color: rgb(132, 232, 232);
+  color: #212121;
+}
