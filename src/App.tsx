@@ -1,73 +1,41 @@
 import { useCallback, useState } from "react";
-import { Comment } from "./components/comment/Comment";
-import { generateString, getRandomInt } from "./utils";
-
-type CommentAlbum = {
-  id: number;
-  username: string;
-  text: string;
-  replyes: CommentAlbum[];
-}
+import { Comment as CommentAlbum } from "./components/comment/Comment";
+import { generateComment } from "./utils";
+import { addComment } from "./add-comment";
+import { Comment } from "./entities/comment";
 
 
-function generateComment(id: number, comments: CommentAlbum[] = []): CommentAlbum {
-  return {
-    id,
-    username: generateString(getRandomInt(5, 20)),
-    text: generateString(getRandomInt(20, 500)),
-    replyes: comments
-  }
-}
-
-const TEXT_COMMENTS: CommentAlbum[] = [
-  generateComment(1),
-  generateComment(2, [
-    generateComment(3, [
-      generateComment(4),
-      generateComment(5, [
-        generateComment(6),
-      ]),
-    ]),
-    generateComment(7),
-  ]),
+const TEXT_COMMENTS: Comment[] = [
+  generateComment(),
+  generateComment({ replies: [
+    generateComment({ replies: [
+      generateComment(),
+      generateComment({ replies: Array(5).fill(null).map(() => generateComment())}),
+    ]}),
+    generateComment(),
+  ]}),
 ]
 
 
-type CommentsProps = {
-  comments: CommentAlbum[];
+type CommentAlbumsProps = {
+  comments: Comment[];
   onClick(id: number): void;
 }
 
-function addComment(parantId: number, newComment: CommentAlbum, comments: CommentAlbum[]): CommentAlbum[] {
-  return comments.map((comment) => {
-    if (comment.id === parantId) {
-      return {
-        ...comment,
-        replyes: [newComment, ...comment.replyes]
-      }
-    }
 
-    return {
-      ...comment,
-      replyes: addComment(parantId, newComment, comment.replyes)
-    }
-  });
-}
-
-
-function Comments({ comments, onClick }: CommentsProps) {
+function CommentAlbums({ comments, onClick }: CommentAlbumsProps) {
   return (
     <>
       {comments.map((comment) => (
-        <Comment
+        <CommentAlbum
           key={comment.id}
           id={comment.id}
           username={comment.username}
           text={comment.text}
           onClick={onClick}
         >
-          <Comments comments={comment.replyes} onClick={onClick} />
-        </Comment>
+          <CommentAlbums comments={comment.replies} onClick={onClick} />
+        </CommentAlbum>
       ))}
     </>
   )
@@ -79,19 +47,14 @@ function App() {
   const [comments, setComments] = useState(TEXT_COMMENTS);
 
   const handleAddComment = useCallback((parentId: number) => {
-    const comment: CommentAlbum = {
-      id: Date.now(),
-      username: generateString(getRandomInt(5, 20)),
-      text: generateString(getRandomInt(20, 500)),
-      replyes: [],
-    }
+    const comment = generateComment();
     setComments(comments => addComment(
       parentId, comment, comments))
   }, []);
 
 
   return (
-    <Comments comments={comments} onClick={handleAddComment}/>
+    <CommentAlbums comments={comments} onClick={handleAddComment}/>
   )
 }
 
