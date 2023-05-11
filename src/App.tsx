@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { Comment as CommentAlbum } from "./components/comment/Comment";
+import { createComments } from "./components/comments/Comments";
 import { generateComment } from "./utils";
 import { addComment } from "./add-comment";
 import { Comment } from "./entities/comment";
@@ -10,7 +11,7 @@ const TEXT_COMMENTS: Comment[] = [
   generateComment({ replies: [
     generateComment({ replies: [
       generateComment(),
-      generateComment({ replies: Array(5).fill(null).map(() => generateComment())}),
+      generateComment({ replies: Array(10).fill(null).map((_, i) => generateComment({ id: i }))}),
     ]}),
     generateComment(),
   ]}),
@@ -21,6 +22,8 @@ type CommentAlbumsProps = {
   comments: Comment[];
   onClick(id: number): void;
 }
+
+
 
 
 function CommentAlbums({ comments, onClick }: CommentAlbumsProps) {
@@ -41,7 +44,7 @@ function CommentAlbums({ comments, onClick }: CommentAlbumsProps) {
   )
 }
 
-
+const Comments = createComments();
 
 function App() {
   const [comments, setComments] = useState(TEXT_COMMENTS);
@@ -54,7 +57,10 @@ function App() {
 
 
   return (
-    <CommentAlbums comments={comments} onClick={handleAddComment}/>
+    <Comments
+      comments={comments}
+      // onClick={handleAddComment}
+    />
   )
 }
 

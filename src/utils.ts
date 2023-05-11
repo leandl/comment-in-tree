@@ -23,7 +23,8 @@ export function generateComment(comment?: Partial<Comment>): Comment {
     username: comment?.username || generateString(getRandomInt(5, 20)),
     text: comment?.text || generateString(getRandomInt(20, 500)),
     replies: comment?.replies || [],
-    dislikes: comment?.dislikes || 0,
-    likes: comment?.likes || 0
+    userLikeComment: 1,
+    dislikes: comment?.dislikes || getRandomInt(5, 20),
+    likes: comment?.likes || getRandomInt(5, 20)
   }
 }
